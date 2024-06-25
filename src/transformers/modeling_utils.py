@@ -59,6 +59,7 @@ from .quantizers import AutoHfQuantizer, HfQuantizer
 from .quantizers.quantizers_utils import get_module_from_name
 from .safetensors_conversion import auto_conversion
 from .utils import (
+    ACCELERATE_MIN_VERSION,
     ADAPTER_SAFE_WEIGHTS_NAME,
     ADAPTER_WEIGHTS_NAME,
     CONFIG_NAME,
@@ -3118,7 +3119,7 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PushToHubMix
             )
 
         if gguf_file is not None and not is_accelerate_available():
-            raise ValueError("accelerate is required when loading a GGUF file `pip install accelerate`.")
+            raise ValueError(f"accelerate is required when loading a GGUF file `pip install 'accelerate>={ACCELERATE_MIN_VERSION}'`.")
 
         if commit_hash is None:
             if not isinstance(config, PretrainedConfig):
@@ -3195,7 +3196,8 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PushToHubMix
                 )
             elif not is_accelerate_available():
                 raise ImportError(
-                    "Using `low_cpu_mem_usage=True` or a `device_map` requires Accelerate: `pip install accelerate`"
+                    f"Using `low_cpu_mem_usage=True` or a `device_map` requires Accelerate: `pip install"
+                    f"'accelerate>={ACCELERATE_MIN_VERSION}'`"
                 )
 
         # handling bnb config from kwargs, remove after `load_in_{4/8}bit` deprecation.
